@@ -26,6 +26,10 @@ public class SpiderLeg
             "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.112 Safari/535.1";
     private List<String> links = new LinkedList<String>();
     private Document htmlDocument;
+    
+    //Amazon search URL
+    private static final String AMAZON_SEARCH = 
+            "http://www.amazon.ca/s/ref=nb_sb_noss_2?url=search-alias%3Daps&field-keywords=";
 
 
     /**
@@ -94,6 +98,13 @@ public class SpiderLeg
     public List<String> getLinks()
     {
         return this.links;
+    }
+    
+    public String searchTag(String tag) {
+        
+        System.out.println("Searching for "+tag+" in Amazon");
+        
+        return AMAZON_SEARCH+tag;
     }
 
 }
