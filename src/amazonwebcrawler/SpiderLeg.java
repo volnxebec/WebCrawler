@@ -27,10 +27,7 @@ public class SpiderLeg
     private List<String> links = new LinkedList<String>();
     private Document htmlDocument;
     
-    //Amazon search URL
-    private static final String AMAZON_SEARCH = 
-            "http://www.amazon.ca/s/ref=nb_sb_noss_2?url=search-alias%3Daps&field-keywords=";
-
+    private List<String> productLinks = new LinkedList<String>();
 
     /**
      * This performs all the work. It makes an HTTP request, checks the response, and then gathers
@@ -93,18 +90,56 @@ public class SpiderLeg
         String bodyText = this.htmlDocument.body().text();
         return bodyText.toLowerCase().contains(searchWord.toLowerCase());
     }
-
-
+    
     public List<String> getLinks()
     {
         return this.links;
     }
-    
-    public String searchTag(String tag) {
+
+
+    public List<String> getProductLinks(String url)
+    {
+        //List<String> tmpLinks = new LinkedList<String>();
         
-        System.out.println("Searching for "+tag+" in Amazon");
+        try
+        {
+            Connection connection = Jsoup.connect(url).userAgent(USER_AGENT);
+            Document htmlDocument = connection.get();
+            this.htmlDocument = htmlDocument;
+            if(connection.response().statusCode() == 200) // 200 is the HTTP OK status code
+                                                          // indicating that everything is great.
+            {
+                System.out.println("\n**Visiting** Received web page at " + url);
+            }
+            if(!connection.response().contentType().contains("text/html"))
+            {
+                System.out.println("**Failure** Retrieved something other than HTML");
+                //return false;
+            }
+            Elements linksOnPage = htmlDocument.select("a[href]");
+            System.out.println("Found (" + linksOnPage.size() + ") links");
+            for(Element link : linksOnPage)
+            {
+                
+                String actualLink = link.attr("abs:href");
+                //System.out.println(link);
+                if (actualLink.matches("(.*)/gp/offer-listing(.*)")) {
+                    System.out.println(actualLink);
+                    productLinks.add(link.absUrl("href"));
+                }
+            }
+            //return true;
+        }
+        catch(IOException ioe)
+        {
+            // We were not successful in our HTTP request
+            //return false;
+        }
         
-        return AMAZON_SEARCH+tag;
+        
+        return this.productLinks;
     }
+    
+
 
 }

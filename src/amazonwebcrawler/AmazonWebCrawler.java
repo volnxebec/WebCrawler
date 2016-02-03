@@ -28,26 +28,29 @@ public class AmazonWebCrawler {
         // TODO code application logic here
         System.out.println("Hello World!");
         
+        Spider spider = new Spider();
         SpiderLeg leg = new SpiderLeg();
         //
         
         String tag = "basketball";
-        String url = leg.searchTag(tag);
+        String url = spider.searchTag(tag);
         
-        Connection connection = Jsoup.connect(url).userAgent(USER_AGENT).timeout(5000);
-        Document htmlDocument = connection.get();   
+        leg.getProductLinks(url);
         
+        //Connection connection = Jsoup.connect(url).userAgent(USER_AGENT).timeout(5000);
+        //Document htmlDocument = connection.get();   
+     
         
         //System.out.println(htmlDocument);
         
-        Elements links = htmlDocument.select("a[href]");
+        //Elements links = htmlDocument.select("a[href]");
         
-        for (Element link : links) {
-            System.out.println(link);
+        //for (Element link : links) {
+        //    System.out.println(link);
+       // 
+        //}
         
-        }
-        
-        //Spider spider = new Spider();
+        //
         
         //spider.search("http://www.tomshardware.com", "Google");
     }

@@ -19,8 +19,33 @@ public class Spider
   private static final int MAX_PAGES_TO_SEARCH = 10;
   private Set<String> pagesVisited = new HashSet<String>();
   private List<String> pagesToVisit = new LinkedList<String>();
+  
+  private Set<String> productListing = new HashSet<String>();
+  
+  //Amazon search URL
+  private static final String AMAZON_SEARCH = 
+    "http://www.amazon.ca/s/ref=nb_sb_noss_2?url=search-alias%3Daps&field-keywords=";
 
-
+  
+  public void updateProductListing(String url) {
+      
+      //Get all the product listings on the page
+      while (this.pagesVisited.size() < MAX_PAGES_TO_SEARCH) {
+          String currentUrl;
+          SpiderLeg leg = new SpiderLeg();
+          if (this.pagesToVisit.isEmpty())
+          {
+              currentUrl = url;
+              this.pagesVisited.add(url);
+          }
+          else {
+              currentUrl = this.nextUrl();
+          }
+      }
+      
+      
+  }
+  
   /**
    * Our main launching point for the Spider's functionality. Internally it creates spider legs
    * that make an HTTP request and parse the response (the web page).
@@ -75,4 +100,11 @@ public class Spider
       this.pagesVisited.add(nextUrl);
       return nextUrl;
   }
+  
+    public String searchTag(String tag) {
+        
+        System.out.println("Searching for "+tag+" in Amazon");
+        
+        return AMAZON_SEARCH+tag;
+    }
 }
