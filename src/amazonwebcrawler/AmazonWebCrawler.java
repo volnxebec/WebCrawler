@@ -29,30 +29,12 @@ public class AmazonWebCrawler {
         System.out.println("Hello World!");
         
         Spider spider = new Spider();
-        SpiderLeg leg = new SpiderLeg();
-        //
         
         String tag = "basketball";
         String url = spider.searchTag(tag);
         
-        leg.getProductLinks(url);
-        
-        //Connection connection = Jsoup.connect(url).userAgent(USER_AGENT).timeout(5000);
-        //Document htmlDocument = connection.get();   
-     
-        
-        //System.out.println(htmlDocument);
-        
-        //Elements links = htmlDocument.select("a[href]");
-        
-        //for (Element link : links) {
-        //    System.out.println(link);
-       // 
-        //}
-        
-        //
-        
-        //spider.search("http://www.tomshardware.com", "Google");
+        spider.updateProductListing(url);
+
     }
     
 }

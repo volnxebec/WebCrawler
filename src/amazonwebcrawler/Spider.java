@@ -29,19 +29,22 @@ public class Spider
   
   public void updateProductListing(String url) {
       
-      //Get all the product listings on the page
-      while (this.pagesVisited.size() < MAX_PAGES_TO_SEARCH) {
-          String currentUrl;
-          SpiderLeg leg = new SpiderLeg();
-          if (this.pagesToVisit.isEmpty())
-          {
-              currentUrl = url;
-              this.pagesVisited.add(url);
-          }
-          else {
-              currentUrl = this.nextUrl();
-          }
+      SpiderLeg leg = new SpiderLeg();
+      
+      List<String> productList = leg.getProductLinks(url);
+      
+      
+      if (productList.isEmpty()) {
+          System.out.println("What???");
       }
+      
+      for (String link : productList) {
+          System.out.println(link);
+          List<String> tagList = leg.getProductInfo(link);
+          System.out.println(tagList);
+      }
+      
+      
       
       
   }

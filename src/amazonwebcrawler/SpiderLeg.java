@@ -26,8 +26,6 @@ public class SpiderLeg
             "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.112 Safari/535.1";
     private List<String> links = new LinkedList<String>();
     private Document htmlDocument;
-    
-    private List<String> productLinks = new LinkedList<String>();
 
     /**
      * This performs all the work. It makes an HTTP request, checks the response, and then gathers
@@ -99,7 +97,7 @@ public class SpiderLeg
 
     public List<String> getProductLinks(String url)
     {
-        //List<String> tmpLinks = new LinkedList<String>();
+        List<String> productLinks = new LinkedList<String>();
         
         try
         {
@@ -123,8 +121,8 @@ public class SpiderLeg
                 
                 String actualLink = link.attr("abs:href");
                 //System.out.println(link);
-                if (actualLink.matches("(.*)/gp/offer-listing(.*)")) {
-                    System.out.println(actualLink);
+                if (actualLink.matches("(.*)customerReviews(.*)")) {
+                    //System.out.println(actualLink);
                     productLinks.add(link.absUrl("href"));
                 }
             }
@@ -137,7 +135,55 @@ public class SpiderLeg
         }
         
         
-        return this.productLinks;
+        return productLinks;
+    }
+    
+    public List<String> getProductInfo(String url){
+        
+        List<String> tagLinks = new LinkedList<String>();
+        
+        try
+        {
+            Connection connection = Jsoup.connect(url).userAgent(USER_AGENT);
+            Document htmlDocument = connection.get();
+            this.htmlDocument = htmlDocument;
+            if(connection.response().statusCode() == 200) // 200 is the HTTP OK status code
+                                                          // indicating that everything is great.
+            {
+                System.out.println("\n**Visiting** Received web page at " + url);
+            }
+            if(!connection.response().contentType().contains("text/html"))
+            {
+                System.out.println("**Failure** Retrieved something other than HTML");
+                //return false;
+            }
+            //Elements linksOnPage = htmlDocument.select("a[href]");
+            //System.out.println(htmlDocument);
+            Elements info = htmlDocument.select("div#wayfinding-breadcrumbs_container");
+            //System.out.println(info);
+            
+            Elements tags = info.select("a[href]");
+            
+            
+            //System.out.println(tags);
+            
+            for (Element tag : tags) {
+                //tagLinks.add();
+                
+                //System.out.println(tag.text());
+                
+                tagLinks.add(tag.text());
+                    
+            }
+            //return true;
+        }
+        catch(IOException ioe)
+        {
+            // We were not successful in our HTTP request
+            //return false;
+        }
+        
+        return tagLinks;
     }
     
 
