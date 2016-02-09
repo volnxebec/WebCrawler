@@ -8,6 +8,7 @@ package amazonwebcrawler;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -19,34 +20,29 @@ public class Spider
   private static final int MAX_PAGES_TO_SEARCH = 10;
   private Set<String> pagesVisited = new HashSet<String>();
   private List<String> pagesToVisit = new LinkedList<String>();
-  
-  private Set<String> productListing = new HashSet<String>();
-  
+    
   //Amazon search URL
   private static final String AMAZON_SEARCH = 
     "http://www.amazon.ca/s/ref=nb_sb_noss_2?url=search-alias%3Daps&field-keywords=";
-
   
-  public void updateProductListing(String url) {
-      
-      SpiderLeg leg = new SpiderLeg();
-      
+  public Set<Map<String,String>> updateProductListing(String url) {
+      SpiderLeg leg = new SpiderLeg();   
+      Set<Map<String,String>> productListing = new HashSet<>();
       List<String> productList = leg.getProductLinks(url);
-      
       
       if (productList.isEmpty()) {
           System.out.println("What???");
       }
-      
+      int m = 0;
       for (String link : productList) {
+          if (m==1) break;
           System.out.println(link);
-          List<String> tagList = leg.getProductInfo(link);
-          System.out.println(tagList);
+          Map<String, String> prodMap = leg.getProductInfo(link);
+          productListing.add(prodMap);
+          //System.out.println(prodMap);
+          m++;
       }
-      
-      
-      
-      
+      return productListing;
   }
   
   /**

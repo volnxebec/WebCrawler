@@ -13,6 +13,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
+import java.util.Map;
 
 /**
  *
@@ -46,13 +47,14 @@ public class Mongo {
         return null;
     }
 
-    public void inputData(DBCollection table, String[] args) {
+    public void inputData(DBCollection table, Map<String, String> product) {
         try{
             /**** Insert ****/
             // create a document to store key and value
             BasicDBObject document = new BasicDBObject();
-            document.put("name", "mkyong");
-            document.put("age", 30);
+            document.put("name", product.get("name"));
+            document.put("url", product.get("url"));
+            document.put("tag", product.get("tag"));
             document.put("createdDate", new Date());
             table.insert(document);
         } catch (MongoException e) {
@@ -60,10 +62,10 @@ public class Mongo {
         }
     }
     
-    public void searchData(DBCollection table, String[] args) {
+    public void searchData(DBCollection table, String args) {
     try{
         BasicDBObject searchQuery = new BasicDBObject();
-        searchQuery.put("name", "mkyong");
+        searchQuery.put("name", args);
 
         DBCursor cursor = table.find(searchQuery);
 

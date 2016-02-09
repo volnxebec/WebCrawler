@@ -6,8 +6,10 @@
 package amazonwebcrawler;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -138,9 +140,10 @@ public class SpiderLeg
         return productLinks;
     }
     
-    public List<String> getProductInfo(String url){
+    public Map<String, String> getProductInfo(String url){
         
         List<String> tagLinks = new LinkedList<String>();
+        Map<String, String> prodInfo = new HashMap<>();
         
         try
         {
@@ -157,24 +160,28 @@ public class SpiderLeg
                 System.out.println("**Failure** Retrieved something other than HTML");
                 //return false;
             }
-            //Elements linksOnPage = htmlDocument.select("a[href]");
             //System.out.println(htmlDocument);
-            Elements info = htmlDocument.select("div#wayfinding-breadcrumbs_container");
-            //System.out.println(info);
+
+            //Put in the product name
+            Elements getName = htmlDocument.select("span[id=productTitle]");
+            String myName = getName.text();
+            //System.out.println(myName);
+            prodInfo.put("name", myName);
             
-            Elements tags = info.select("a[href]");
+            //Put in the product url
+            Elements getUrl = htmlDocument.select("link[rel=canonical]");
+            String myUrl = getUrl.attr("href");
+            //System.out.println(myUrl);
+            prodInfo.put("url", myUrl);
             
-            
-            //System.out.println(tags);
-            
-            for (Element tag : tags) {
-                //tagLinks.add();
-                
-                //System.out.println(tag.text());
-                
-                tagLinks.add(tag.text());
-                    
-            }
+            //Put in the product tags
+            Elements getTags = htmlDocument.select("div#wayfinding-breadcrumbs_container");
+            Elements myTags = getTags.select("a[href]");
+            for (Element tag : myTags) {
+                tagLinks.add(tag.text());                   
+            }  
+            String tagString = tagLinks.toString();
+            prodInfo.put("tag", tagString);
             //return true;
         }
         catch(IOException ioe)
@@ -183,7 +190,7 @@ public class SpiderLeg
             //return false;
         }
         
-        return tagLinks;
+        return prodInfo;
     }
     
 

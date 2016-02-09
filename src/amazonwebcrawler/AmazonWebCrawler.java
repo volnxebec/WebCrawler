@@ -18,6 +18,8 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -40,14 +42,15 @@ public class AmazonWebCrawler {
         String tag = "basketball";
         String url = spider.searchTag(tag);
         
-        spider.updateProductListing(url);
+        Set<Map<String,String>> products = spider.updateProductListing(url);
         
-        String[] temp = new String[10];
         Mongo mg = new Mongo();
-        DBCollection tb = mg.queryDb(temp);
-        mg.inputData(tb, temp);
+        DBCollection tb = mg.queryDb(null);
         
-        mg.searchData(tb, temp);
+        for (Map<String,String> prod : products) {               
+            mg.inputData(tb, prod);
+            mg.searchData(tb, prod.get("name"));
+        }
     }
     
 }
