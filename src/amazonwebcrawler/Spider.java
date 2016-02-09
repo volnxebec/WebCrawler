@@ -33,14 +33,14 @@ public class Spider
       if (productList.isEmpty()) {
           System.out.println("What???");
       }
-      int m = 0;
+      //int m = 0;
       for (String link : productList) {
-          if (m==1) break;
-          System.out.println(link);
+          //if (m==1) break;
+          //System.out.println(link);
           Map<String, String> prodMap = leg.getProductInfo(link);
           productListing.add(prodMap);
           //System.out.println(prodMap);
-          m++;
+          //m++;
       }
       return productListing;
   }

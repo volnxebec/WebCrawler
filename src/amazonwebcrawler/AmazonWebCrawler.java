@@ -6,18 +6,6 @@
 package amazonwebcrawler;
 
 import java.io.IOException;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoException;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,19 +25,14 @@ public class AmazonWebCrawler {
         // TODO code application logic here
         System.out.println("Hello World!");
         
-        Spider spider = new Spider();
+        Spider spider = new Spider();       
+        String[] listOfProducts = {"basketball", "soccer", "football"};
         
-        String tag = "basketball";
-        String url = spider.searchTag(tag);
-        
-        Set<Map<String,String>> products = spider.updateProductListing(url);
-        
-        Mongo mg = new Mongo();
-        DBCollection tb = mg.queryDb(null);
-        
-        for (Map<String,String> prod : products) {               
-            mg.inputData(tb, prod);
-            mg.searchData(tb, prod.get("name"));
+        for (String tag : listOfProducts) {
+            String url = spider.searchTag(tag);       
+            Set<Map<String,String>> products = spider.updateProductListing(url);
+            Mongo mg = new Mongo();
+            mg.addProducts(products);
         }
     }
     

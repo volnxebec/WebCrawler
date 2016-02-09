@@ -153,7 +153,7 @@ public class SpiderLeg
             if(connection.response().statusCode() == 200) // 200 is the HTTP OK status code
                                                           // indicating that everything is great.
             {
-                System.out.println("\n**Visiting** Received web page at " + url);
+                //System.out.println("\n**Visiting** Received web page at " + url);
             }
             if(!connection.response().contentType().contains("text/html"))
             {

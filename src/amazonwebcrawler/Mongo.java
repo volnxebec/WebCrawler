@@ -5,7 +5,6 @@
  */
 package amazonwebcrawler;
 
-import java.net.UnknownHostException;
 import java.util.Date;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -14,6 +13,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -22,11 +22,14 @@ import java.util.Map;
 //package com.mkyong.core;
 public class Mongo {
 
+    private DBCollection myTable;
+    
     public Mongo() {
         //Constructor
+        myTable = this.queryDb(null);
     }
 
-    public DBCollection queryDb(String[] args) {
+    private DBCollection queryDb(String[] args) {
         try {
 
             /**** Connect to MongoDB ****/
@@ -46,8 +49,15 @@ public class Mongo {
         }
         return null;
     }
+    
+    public void addProducts(Set<Map<String,String>> prodList) {
+        for (Map<String,String> prod : prodList) {               
+            this.inputData(prod);
+            this.searchData(prod.get("name"));
+        }
+    }
 
-    public void inputData(DBCollection table, Map<String, String> product) {
+    public void inputData(Map<String, String> product) {
         try{
             /**** Insert ****/
             // create a document to store key and value
@@ -56,18 +66,34 @@ public class Mongo {
             document.put("url", product.get("url"));
             document.put("tag", product.get("tag"));
             document.put("createdDate", new Date());
-            table.insert(document);
+            removeData(product.get("name"));
+            myTable.insert(document);
         } catch (MongoException e) {
             e.printStackTrace();
         }
     }
     
-    public void searchData(DBCollection table, String args) {
+    public void removeData(String name) {
+        try{
+            BasicDBObject searchQuery = new BasicDBObject();
+            searchQuery.put("name", name);
+
+            DBCursor cursor = myTable.find(searchQuery);
+
+            while (cursor.hasNext()) {
+                myTable.remove(cursor.next());
+            }
+        } catch (MongoException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void searchData(String name) {
     try{
         BasicDBObject searchQuery = new BasicDBObject();
-        searchQuery.put("name", args);
+        searchQuery.put("name", name);
 
-        DBCursor cursor = table.find(searchQuery);
+        DBCursor cursor = myTable.find(searchQuery);
 
         while (cursor.hasNext()) {
                 System.out.println(cursor.next());
