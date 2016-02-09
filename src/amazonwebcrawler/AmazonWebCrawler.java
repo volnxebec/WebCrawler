@@ -12,6 +12,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoException;
+
 /**
  *
  * @author hwei
@@ -34,9 +41,13 @@ public class AmazonWebCrawler {
         String url = spider.searchTag(tag);
         
         spider.updateProductListing(url);
-
+        
+        String[] temp = new String[10];
+        Mongo mg = new Mongo();
+        DBCollection tb = mg.queryDb(temp);
+        mg.inputData(tb, temp);
+        
+        mg.searchData(tb, temp);
     }
-    
-    
     
 }
