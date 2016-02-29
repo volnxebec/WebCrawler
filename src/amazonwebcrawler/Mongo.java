@@ -12,6 +12,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
@@ -64,7 +65,17 @@ public class Mongo {
             BasicDBObject document = new BasicDBObject();
             document.put("name", product.get("name"));
             document.put("url", product.get("url"));
-            document.put("tag", product.get("tag"));
+            //document.put("tag", product.get("tag"));
+            //Make tag a list...
+            String tagString = product.get("tag");
+            ArrayList<String> tagList = new ArrayList<String>();
+            for (String eachTag:tagString.split(",")){
+                eachTag = eachTag.replace("[", "");
+                eachTag = eachTag.replace("]","");
+                eachTag = eachTag.trim();
+                tagList.add(eachTag);
+            }
+            document.put("tag", tagList);
             document.put("createdDate", new Date());
             removeData(product.get("name"));
             myTable.insert(document);
