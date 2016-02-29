@@ -140,7 +140,7 @@ public class SpiderLeg
         return productLinks;
     }
     
-    public Map<String, String> getProductInfo(String url){
+    public Map<String, String> getProductInfo(String url, List<String> extraLinks){
         
         List<String> tagLinks = new LinkedList<String>();
         Map<String, String> prodInfo = new HashMap<>();
@@ -168,11 +168,45 @@ public class SpiderLeg
             //System.out.println(myName);
             prodInfo.put("name", myName);
             
+            //Put in the product price
+            Elements getPrice = htmlDocument.select("span[id=priceblock_ourprice]");
+            String myPrice = getPrice.text();
+            //System.out.println(myPrice);
+            prodInfo.put("price", myPrice);
+            
             //Put in the product url
             Elements getUrl = htmlDocument.select("link[rel=canonical]");
             String myUrl = getUrl.attr("href");
             //System.out.println(myUrl);
             prodInfo.put("url", myUrl);
+            
+            if (extraLinks != null) {
+                //Get extra links
+                Elements alsoBuyText = htmlDocument.select("div[id=purchase-sims-feature]");
+                //System.out.println(alsoBuyText);
+                Elements alsoBuyLinks = alsoBuyText.select("a[href]");
+                //System.out.println(alsoBuyLinks);
+                for(Element link : alsoBuyLinks)
+                {
+
+                    String actualLink = link.attr("abs:href");
+                    //System.out.println(actualLink);
+                    if (!actualLink.matches("(.*)product-reviews(.*)")) {
+                        //Some parsing hacks
+                        String[] parseLink = actualLink.split("ref=");
+                        String finalLink = parseLink[0];
+                        finalLink = finalLink.substring(0, finalLink.length()-1);
+                        if (!finalLink.equals(myUrl)) {
+                            //System.out.println(finalLink);
+                            //add this extra link as long as we don't have it yet
+                            if (!extraLinks.contains(finalLink)) {
+                                extraLinks.add(finalLink);
+                            }
+                        }
+                        //productLinks.add(link.absUrl("href"));
+                    }
+                }
+            }
             
             //Put in the product tags
             Elements getTags = htmlDocument.select("div#wayfinding-breadcrumbs_container");

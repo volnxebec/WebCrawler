@@ -20,6 +20,8 @@ public class Spider
   private static final int MAX_PAGES_TO_SEARCH = 10;
   private Set<String> pagesVisited = new HashSet<String>();
   private List<String> pagesToVisit = new LinkedList<String>();
+  
+  private boolean debugFlag = false;
     
   //Amazon search URL
   private static final String AMAZON_SEARCH = 
@@ -29,19 +31,29 @@ public class Spider
       SpiderLeg leg = new SpiderLeg();   
       Set<Map<String,String>> productListing = new HashSet<>();
       List<String> productList = leg.getProductLinks(url);
+      List<String> extraLinks = new LinkedList<String>();
       
       if (productList.isEmpty()) {
           System.out.println("What???");
       }
+      
       //int m = 0;
       for (String link : productList) {
           //if (m==1) break;
           //System.out.println(link);
-          Map<String, String> prodMap = leg.getProductInfo(link);
+          Map<String, String> prodMap = leg.getProductInfo(link, extraLinks);
           productListing.add(prodMap);
           //System.out.println(prodMap);
           //m++;
       }
+      
+      for (String link : extraLinks) {
+          //System.out.println(link);
+          Map<String, String> prodMap = leg.getProductInfo(link, null);
+          productListing.add(prodMap);
+          //System.out.println(prodMap);
+      }
+      
       return productListing;
   }
   

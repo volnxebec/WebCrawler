@@ -27,6 +27,7 @@ public class AmazonWebCrawler {
         
         Spider spider = new Spider();       
         String[] listOfProducts = {"basketball", "soccer", "football"};
+        //String[] listOfProducts = {"basketball"};
         
         for (String tag : listOfProducts) {
             String url = spider.searchTag(tag);       

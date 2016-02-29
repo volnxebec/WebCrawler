@@ -65,6 +65,7 @@ public class Mongo {
             BasicDBObject document = new BasicDBObject();
             document.put("name", product.get("name"));
             document.put("url", product.get("url"));
+            document.put("price", product.get("price"));
             //document.put("tag", product.get("tag"));
             //Make tag a list...
             String tagString = product.get("tag");
