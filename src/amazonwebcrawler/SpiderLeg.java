@@ -169,6 +169,12 @@ public class SpiderLeg
             //System.out.println(myName);
             prodInfo.put("name", myName);
             
+            //Put in the product rating
+            Elements getRating = htmlDocument.select("span[class=reviewCountTextLinkedHistogram noUnderline]");
+            String myRating = getRating.attr("title");
+            prodInfo.put("rating", myRating);
+            //System.out.println(myRating);
+            
             //Bad product...
             if (myName.equals("")) {
                 return null;
@@ -249,6 +255,10 @@ public class SpiderLeg
             for (Element tag : myTags) {
                 tagLinks.add(tag.text());                   
             }  
+            //No tags found... return null
+            if (tagLinks.isEmpty()) {
+                return null;
+            }
             //String tagString = tagLinks.toString();
             prodInfo.put("tag", tagLinks);
             //return true;

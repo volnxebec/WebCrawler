@@ -27,15 +27,15 @@ public class AmazonWebCrawler {
         
         //Default search list...
         String[] listOfProducts = {"basketball", "soccer", "football"};
+        //String[] listOfProducts = {"basketball"};
         
         //Check if we have any arguments...
         if (args.length > 0) {
             listOfProducts = args;
         }
         
-        Spider spider = new Spider();       
+        Spider spider = new Spider();               
         
-        //String[] listOfProducts = {"basketball"};
         
         for (String tag : listOfProducts) {
             String url = spider.searchTag(tag);       

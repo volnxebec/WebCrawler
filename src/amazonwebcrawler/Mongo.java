@@ -65,6 +65,7 @@ public class Mongo {
             // create a document to store key and value
             BasicDBObject document = new BasicDBObject();
             document.put("name", (String)product.get("name"));
+            document.put("rating", (String)product.get("rating"));
             document.put("url", (String)product.get("url"));
             document.put("price", (String)product.get("price"));
             document.put("tag", (List<String>)product.get("tag"));
