@@ -13,6 +13,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,11 +40,11 @@ public class Mongo {
 
             /**** Get database ****/
             // if database doesn't exists, MongoDB will create it for you
-            DB db = mongo.getDB("testdb");
+            DB db = mongo.getDB("test");
 
             /**** Get collection / table from 'testdb' ****/
             // if collection doesn't exists, MongoDB will create it for you
-            DBCollection table = db.getCollection("user");
+            DBCollection table = db.getCollection("Product");
             return table;
         } catch (MongoException e) {
             e.printStackTrace();
@@ -51,34 +52,25 @@ public class Mongo {
         return null;
     }
     
-    public void addProducts(Set<Map<String,String>> prodList) {
-        for (Map<String,String> prod : prodList) {               
+    public void addProducts(Set<Map<String,Object>> prodList) {
+        for (Map<String,Object> prod : prodList) {               
             this.inputData(prod);
-            this.searchData(prod.get("name"));
+            this.searchData((String)prod.get("name"));
         }
     }
 
-    public void inputData(Map<String, String> product) {
+    public void inputData(Map<String, Object> product) {
         try{
             /**** Insert ****/
             // create a document to store key and value
             BasicDBObject document = new BasicDBObject();
-            document.put("name", product.get("name"));
-            document.put("url", product.get("url"));
-            document.put("price", product.get("price"));
-            //document.put("tag", product.get("tag"));
-            //Make tag a list...
-            String tagString = product.get("tag");
-            ArrayList<String> tagList = new ArrayList<String>();
-            for (String eachTag:tagString.split(",")){
-                eachTag = eachTag.replace("[", "");
-                eachTag = eachTag.replace("]","");
-                eachTag = eachTag.trim();
-                tagList.add(eachTag);
-            }
-            document.put("tag", tagList);
+            document.put("name", (String)product.get("name"));
+            document.put("url", (String)product.get("url"));
+            document.put("price", (String)product.get("price"));
+            document.put("tag", (List<String>)product.get("tag"));
+            document.put("review", (List<String>)product.get("review"));
             document.put("createdDate", new Date());
-            removeData(product.get("name"));
+            removeData((String)product.get("name"));
             myTable.insert(document);
         } catch (MongoException e) {
             e.printStackTrace();

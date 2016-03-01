@@ -31,7 +31,7 @@ public class AmazonWebCrawler {
         
         for (String tag : listOfProducts) {
             String url = spider.searchTag(tag);       
-            Set<Map<String,String>> products = spider.updateProductListing(url);
+            Set<Map<String,Object>> products = spider.updateProductListing(url);
             Mongo mg = new Mongo();
             mg.addProducts(products);
         }

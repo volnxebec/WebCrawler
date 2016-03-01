@@ -27,9 +27,9 @@ public class Spider
   private static final String AMAZON_SEARCH = 
     "http://www.amazon.ca/s/ref=nb_sb_noss_2?url=search-alias%3Daps&field-keywords=";
   
-  public Set<Map<String,String>> updateProductListing(String url) {
+  public Set<Map<String,Object>> updateProductListing(String url) {
       SpiderLeg leg = new SpiderLeg();   
-      Set<Map<String,String>> productListing = new HashSet<>();
+      Set<Map<String,Object>> productListing = new HashSet<>();
       List<String> productList = leg.getProductLinks(url);
       List<String> extraLinks = new LinkedList<String>();
       
@@ -41,19 +41,23 @@ public class Spider
       for (String link : productList) {
           //if (m==1) break;
           //System.out.println(link);
-          Map<String, String> prodMap = leg.getProductInfo(link, extraLinks);
-          productListing.add(prodMap);
+          Map<String, Object> prodMap = leg.getProductInfo(link, extraLinks);
+          if (prodMap != null) {
+            productListing.add(prodMap);
+          }
           //System.out.println(prodMap);
           //m++;
       }
-      
+      // /*
       for (String link : extraLinks) {
           //System.out.println(link);
-          Map<String, String> prodMap = leg.getProductInfo(link, null);
-          productListing.add(prodMap);
+          Map<String, Object> prodMap = leg.getProductInfo(link, null);
+          if (prodMap != null) {
+            productListing.add(prodMap);
+          }
           //System.out.println(prodMap);
       }
-      
+      // */
       return productListing;
   }
   

@@ -140,10 +140,11 @@ public class SpiderLeg
         return productLinks;
     }
     
-    public Map<String, String> getProductInfo(String url, List<String> extraLinks){
+    public Map<String, Object> getProductInfo(String url, List<String> extraLinks){
         
         List<String> tagLinks = new LinkedList<String>();
-        Map<String, String> prodInfo = new HashMap<>();
+        List<String> reviewLinks = new LinkedList<String>();
+        Map<String, Object> prodInfo = new HashMap<>();
         
         try
         {
@@ -168,6 +169,11 @@ public class SpiderLeg
             //System.out.println(myName);
             prodInfo.put("name", myName);
             
+            //Bad product...
+            if (myName.equals("")) {
+                return null;
+            }
+            
             //Put in the product price
             Elements getPrice = htmlDocument.select("span[id=priceblock_ourprice]");
             String myPrice = getPrice.text();
@@ -179,6 +185,35 @@ public class SpiderLeg
             String myUrl = getUrl.attr("href");
             //System.out.println(myUrl);
             prodInfo.put("url", myUrl);
+            
+            //Get customer reviews in a list
+            Elements getCustomerRev = htmlDocument.select("div[id=cm_cr_dpcmps]");
+            //System.out.println(getCustomerRev);
+            Elements parseMktRev = getCustomerRev.select("div[class=a-section celwidget");
+            //System.out.println(parseMktRev);
+            for (Element line : parseMktRev) {
+                //System.out.println(line);
+                //Get the star rating
+                Elements starsLink = line.select("a[class=a-link-normal a-text-normal]");
+                String starsRev = starsLink.attr("title");
+                //System.out.println(starsRev);
+                //Get the title
+                Elements titleLink = line.select("span[class=a-size-base a-text-bold]");
+                String titleRev = titleLink.text();
+                //System.out.println(titleRev);
+                //Get the content
+                Elements contentLink = line.select("div[class=a-section]");
+                String contentRev = contentLink.text();
+                //System.out.println(contentRev);
+                
+                //Append them all together with new line character
+                String wholeRev = starsRev+"\n"+titleRev+"\n"+contentRev;
+                //System.out.println(wholeRev);
+                reviewLinks.add(wholeRev);
+            }
+            //System.out.println(reviewLinks);
+            //String reviewString = reviewLinks.toString();
+            prodInfo.put("review", reviewLinks);
             
             if (extraLinks != null) {
                 //Get extra links
@@ -214,8 +249,8 @@ public class SpiderLeg
             for (Element tag : myTags) {
                 tagLinks.add(tag.text());                   
             }  
-            String tagString = tagLinks.toString();
-            prodInfo.put("tag", tagString);
+            //String tagString = tagLinks.toString();
+            prodInfo.put("tag", tagLinks);
             //return true;
         }
         catch(IOException ioe)
