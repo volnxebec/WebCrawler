@@ -25,8 +25,16 @@ public class AmazonWebCrawler {
         // TODO code application logic here
         System.out.println("Hello World!");
         
-        Spider spider = new Spider();       
+        //Default search list...
         String[] listOfProducts = {"basketball", "soccer", "football"};
+        
+        //Check if we have any arguments...
+        if (args.length > 0) {
+            listOfProducts = args;
+        }
+        
+        Spider spider = new Spider();       
+        
         //String[] listOfProducts = {"basketball"};
         
         for (String tag : listOfProducts) {
