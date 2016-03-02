@@ -172,8 +172,12 @@ public class SpiderLeg
             //Put in the product rating
             Elements getRating = htmlDocument.select("span[class=reviewCountTextLinkedHistogram noUnderline]");
             String myRating = getRating.attr("title");
-            prodInfo.put("rating", myRating);
-            //System.out.println(myRating);
+            double myNumRate = 0.0;
+            if (!myRating.equals("")) {
+                myNumRate = this.parseRating(myRating);            
+                //System.out.println(myNumRate);
+            }
+            prodInfo.put("rating", myNumRate);
             
             //Bad product...
             if (myName.equals("")) {
@@ -192,6 +196,11 @@ public class SpiderLeg
             //System.out.println(myUrl);
             prodInfo.put("url", myUrl);
             
+            //Get product ID from URL
+            String[] idList = myUrl.split("/");
+            String myID = idList[idList.length-1];
+            prodInfo.put("ID", myID);
+            
             //Get customer reviews in a list
             Elements getCustomerRev = htmlDocument.select("div[id=cm_cr_dpcmps]");
             //System.out.println(getCustomerRev);
@@ -202,6 +211,12 @@ public class SpiderLeg
                 //Get the star rating
                 Elements starsLink = line.select("a[class=a-link-normal a-text-normal]");
                 String starsRev = starsLink.attr("title");
+                double myStarRate = 0.0;
+                if (!starsRev.equals("")) {
+                    myStarRate = this.parseRating(starsRev);
+                    //prodInfo.put("rating", myStarRate);
+                    //System.out.println(myStarRate);
+                }
                 //System.out.println(starsRev);
                 //Get the title
                 Elements titleLink = line.select("span[class=a-size-base a-text-bold]");
@@ -213,7 +228,7 @@ public class SpiderLeg
                 //System.out.println(contentRev);
                 
                 //Append them all together with new line character
-                String wholeRev = starsRev+"\n"+titleRev+"\n"+contentRev;
+                String wholeRev = myStarRate+"\n"+titleRev+"\n"+contentRev;
                 //System.out.println(wholeRev);
                 reviewLinks.add(wholeRev);
             }
@@ -272,6 +287,11 @@ public class SpiderLeg
         return prodInfo;
     }
     
+    private double parseRating(String strRate) {
+        String[] strList = strRate.split(" ");
+        double numRate = Double.parseDouble(strList[0]);
+        return numRate;
+    }
 
 
 }
