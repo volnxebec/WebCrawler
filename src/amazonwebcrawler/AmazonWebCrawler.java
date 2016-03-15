@@ -24,7 +24,7 @@ public class AmazonWebCrawler {
         
         //Default search list...
         String[] listOfProducts = {"basketball", "soccer", "football"};
-        boolean realTime = false;
+        boolean realTime = true;
         //String[] listOfProducts = {"basketball"};
         
         //Check if we have any arguments...

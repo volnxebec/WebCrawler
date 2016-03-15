@@ -11,6 +11,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.MongoException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,15 +37,16 @@ public class Mongo {
 
             /**** Connect to MongoDB ****/
             // Since 2.10.0, uses MongoClient
-            MongoClient mongo = new MongoClient("localhost", 27017);
+            MongoClientURI uri  = new MongoClientURI("mongodb://heroku_73s67dx7:2d6hshk9a78f2dlfkachg486t7@ds011399.mlab.com:11399/heroku_73s67dx7");
+            MongoClient mongo = new MongoClient(uri);
 
             /**** Get database ****/
             // if database doesn't exists, MongoDB will create it for you
-            DB db = mongo.getDB("test");
+            DB db = mongo.getDB("heroku_73s67dx7");
 
             /**** Get collection / table from 'testdb' ****/
             // if collection doesn't exists, MongoDB will create it for you
-            DBCollection table = db.getCollection("Product");
+            DBCollection table = db.getCollection("products");
             return table;
         } catch (MongoException e) {
             e.printStackTrace();
