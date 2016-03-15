@@ -22,10 +22,16 @@ public class Spider
   private List<String> pagesToVisit = new LinkedList<String>();
   
   private boolean debugFlag = false;
+  
+  private boolean realTime = false;
     
   //Amazon search URL
   private static final String AMAZON_SEARCH = 
     "http://www.amazon.ca/s/ref=nb_sb_noss_2?url=search-alias%3Daps&field-keywords=";
+  
+  public Spider(boolean realTime) {
+      this.realTime = realTime;
+  }
   
   public Set<Map<String,Object>> updateProductListing(String url) {
       SpiderLeg leg = new SpiderLeg();   
@@ -49,13 +55,15 @@ public class Spider
           //m++;
       }
       // /*
-      for (String link : extraLinks) {
-          //System.out.println(link);
-          Map<String, Object> prodMap = leg.getProductInfo(link, null);
-          if (prodMap != null) {
-            productListing.add(prodMap);
-          }
-          //System.out.println(prodMap);
+      if (!realTime) {
+        for (String link : extraLinks) {
+            //System.out.println(link);
+            Map<String, Object> prodMap = leg.getProductInfo(link, null);
+            if (prodMap != null) {
+              productListing.add(prodMap);
+            }
+            //System.out.println(prodMap);
+        }
       }
       // */
       return productListing;
