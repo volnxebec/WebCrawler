@@ -6,6 +6,7 @@
 package amazonwebcrawler;
 
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,8 @@ public class Spider
   private Set<String> pagesVisited = new HashSet<String>();
   private List<String> pagesToVisit = new LinkedList<String>();
   
+  private LinkedHashMap<String, String> proxyInfo;
+  
   private boolean debugFlag = false;
   
   private boolean realTime = false;
@@ -33,10 +36,11 @@ public class Spider
   
   public Spider(boolean realTime) {
       this.realTime = realTime;
+      proxyInfo = new LinkedHashMap<>();
   }
   
   public Set<Map<String,Object>> updateProductListing(String url) {
-      SpiderLeg leg = new SpiderLeg();   
+      SpiderLeg leg = new SpiderLeg(proxyInfo);   
       Set<Map<String,Object>> productListing = new HashSet<>();
       List<String> productList = leg.getProductLinks(url);
       List<String> extraLinks = new LinkedList<String>();
@@ -85,7 +89,7 @@ public class Spider
       while(this.pagesVisited.size() < MAX_PAGES_TO_SEARCH)
       {
           String currentUrl;
-          SpiderLeg leg = new SpiderLeg();
+          SpiderLeg leg = new SpiderLeg(proxyInfo);
           if(this.pagesToVisit.isEmpty())
           {
               currentUrl = url;

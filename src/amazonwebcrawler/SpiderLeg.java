@@ -48,10 +48,10 @@ public class SpiderLeg
         return new BigInteger(130, random).toString(32);
     }
 
-    public SpiderLeg() {
-        proxyInfo = new LinkedHashMap<>();       
-        populateProxy();       
-        proxyHostSet = new ArrayList(proxyInfo.keySet());
+    public SpiderLeg(LinkedHashMap<String, String> proxyInfo) {
+        this.proxyInfo = proxyInfo;
+        //proxyInfo = new LinkedHashMap<>();       
+        if (proxyInfo.isEmpty()) populateProxy();       
     }
     
     private boolean populateProxy() {
@@ -190,8 +190,10 @@ public class SpiderLeg
             Elements linksOnPage = null;
             while (numLink < LINK_THRESHOLD) {
                 if (proxyInfo.isEmpty()) {
-                    populateProxy();                   
+                    populateProxy();    
+                    System.out.println("Need more proxies");
                 }
+                proxyHostSet = new ArrayList(proxyInfo.keySet());
                 
                 int selectHost = random.nextInt(proxyInfo.size());
                 String proxyHost = proxyHostSet.get(selectHost);
@@ -204,7 +206,7 @@ public class SpiderLeg
                 System.out.println("Using Proxy: "+curHost+"/"+curPort);
                 
                 proxyInfo.remove(proxyHost);
-                proxyHostSet.remove(proxyHost);
+                //proxyHostSet.remove(proxyHost);
                 System.out.println(proxyInfo.size());
                 
                 String myUserAgent = USER_AGENT+nextSessionId()+")";
@@ -262,8 +264,10 @@ public class SpiderLeg
             Elements linksOnPage = null;
             while (numLink < LINK_THRESHOLD) {
                 if (proxyInfo.isEmpty()) {
-                    populateProxy();                   
+                    populateProxy(); 
+                    System.out.println("Need more proxies");
                 }
+                proxyHostSet = new ArrayList(proxyInfo.keySet());
                 
                 int selectHost = random.nextInt(proxyInfo.size());
                 String proxyHost = proxyHostSet.get(selectHost);
@@ -276,7 +280,7 @@ public class SpiderLeg
                 System.out.println("Using Proxy: "+curHost+"/"+curPort);
                 
                 proxyInfo.remove(proxyHost);
-                proxyHostSet.remove(proxyHost);
+                //proxyHostSet.remove(proxyHost);
                 System.out.println(proxyInfo.size());
                 
                 String myUserAgent = USER_AGENT+nextSessionId()+")";
