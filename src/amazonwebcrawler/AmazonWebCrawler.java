@@ -35,9 +35,7 @@ public class AmazonWebCrawler {
         }
         
         Spider spider = new Spider(realTime);               
- 
-        
-        
+               
         for (String tag : listOfProducts) {
             String url = spider.searchTag(tag);  
            
@@ -46,6 +44,7 @@ public class AmazonWebCrawler {
             Mongo mg = new Mongo();
             mg.addProducts(products);
         }
+        
         
     }
     

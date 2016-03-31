@@ -35,7 +35,10 @@ public class SpiderLeg
     private Document htmlDocument;
     
     private static final int LINK_THRESHOLD = 100;
+    private static final int PROXY_NUM_THRESHOLD = 80;
     
+    // Proxy info
+    private static final String proxyListUrl = "https://free-proxy-list.net";
     private LinkedHashMap<String, String> proxyInfo;
     private List<String> proxyHostSet;
     
@@ -46,21 +49,61 @@ public class SpiderLeg
     }
 
     public SpiderLeg() {
-        proxyInfo = new LinkedHashMap<>();
-        
-        //Initialize some proxy hosts
-        proxyInfo.put("52.87.245.230", "8083");
-        proxyInfo.put("104.238.164.93", "80");
-        proxyInfo.put("54.187.229.154", "8083");
-        proxyInfo.put("52.53.254.181", "8083");
-        proxyInfo.put("52.23.206.118", "8083");
-        proxyInfo.put("52.53.225.219", "8083");
-        proxyInfo.put("204.101.220.108", "8080");
-        proxyInfo.put("52.36.16.112", "8083");
-        proxyInfo.put("52.36.203.4", "8083");
-        proxyInfo.put("52.36.204.219", "8083");
-        
+        proxyInfo = new LinkedHashMap<>();       
+        populateProxy();       
         proxyHostSet = new ArrayList(proxyInfo.keySet());
+    }
+    
+    private boolean populateProxy() {
+        
+        try
+        {
+            String myUserAgent = USER_AGENT+nextSessionId()+")";
+            System.out.println("Using USER_AGENT: "+myUserAgent);
+            Connection connection = Jsoup.connect(proxyListUrl).userAgent(myUserAgent);
+            Document htmlDocument = connection.get();
+            this.htmlDocument = htmlDocument;
+            if(connection.response().statusCode() == 200) // 200 is the HTTP OK status code
+                                                          // indicating that everything is great.
+            {
+                System.out.println("\n**Visiting** Received web page at " + proxyListUrl);
+            }
+            if(!connection.response().contentType().contains("text/html"))
+            {
+                System.out.println("**Failure** Retrieved something other than HTML");
+                return false;
+            }
+            //Elements linksOnPage = htmlDocument.select("a[href]");
+            //System.out.println("Found (" + linksOnPage.size() + ") links");
+            //for(Element link : linksOnPage)
+            //{
+            //    this.links.add(link.absUrl("href"));
+            //}
+            //System.out.println(htmlDocument);
+            Elements proxyTable = htmlDocument.select("table[id=proxylisttable]");
+            Elements proxyList = proxyTable.select("tbody");
+            Elements proxyEntry = proxyList.select("tr");
+            int numProxy = 0;
+            for (Element proxy : proxyEntry) {
+                if (numProxy == PROXY_NUM_THRESHOLD) break;
+                //System.out.println(proxy);
+                Elements proxyData = proxy.select("td");
+                Element proxyHostData = proxyData.get(0);
+                Element proxyPortData = proxyData.get(1);
+                String proxyHostText = proxyHostData.text();
+                String proxyPortText = proxyPortData.text();
+                System.out.println("ProxyInfo: "+proxyHostText+"/"+proxyPortText);
+                proxyInfo.put(proxyHostText, proxyPortText);
+                numProxy++;
+            }
+            System.out.println("Number of Proxy obtained: "+numProxy);
+            return true;
+        }
+        catch(IOException ioe)
+        {
+            // We were not successful in our HTTP request
+            return false;
+        }
     }
     
     /**
@@ -143,6 +186,10 @@ public class SpiderLeg
             Connection connection;
             Elements linksOnPage = null;
             while (numLink < LINK_THRESHOLD) {
+                if (proxyInfo.isEmpty()) {
+                    populateProxy();                   
+                }
+                
                 int selectHost = random.nextInt(proxyInfo.size());
                 String proxyHost = proxyHostSet.get(selectHost);
           
@@ -152,6 +199,10 @@ public class SpiderLeg
                 String curHost = System.getProperty("http.proxyHost");
                 String curPort = System.getProperty("http.proxyPort");        
                 System.out.println("Using Proxy: "+curHost+"/"+curPort);
+                
+                proxyInfo.remove(proxyHost);
+                proxyHostSet.remove(proxyHost);
+                System.out.println(proxyInfo.size());
                 
                 String myUserAgent = USER_AGENT+nextSessionId()+")";
                 connection = Jsoup.connect(url).userAgent(myUserAgent);
@@ -207,6 +258,10 @@ public class SpiderLeg
             Connection connection;
             Elements linksOnPage = null;
             while (numLink < LINK_THRESHOLD) {
+                if (proxyInfo.isEmpty()) {
+                    populateProxy();                   
+                }
+                
                 int selectHost = random.nextInt(proxyInfo.size());
                 String proxyHost = proxyHostSet.get(selectHost);
           
@@ -216,6 +271,10 @@ public class SpiderLeg
                 String curHost = System.getProperty("http.proxyHost");
                 String curPort = System.getProperty("http.proxyPort");        
                 System.out.println("Using Proxy: "+curHost+"/"+curPort);
+                
+                proxyInfo.remove(proxyHost);
+                proxyHostSet.remove(proxyHost);
+                System.out.println(proxyInfo.size());
                 
                 String myUserAgent = USER_AGENT+nextSessionId()+")";
                 connection = Jsoup.connect(url).userAgent(myUserAgent);

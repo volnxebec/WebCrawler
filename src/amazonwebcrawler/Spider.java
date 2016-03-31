@@ -47,7 +47,7 @@ public class Spider
       
       int m = 0;
       for (String link : productList) {
-          if (m>MAX_RESULT) break;
+          if (m == MAX_RESULT) break;
           //System.out.println(link);
           Map<String, Object> prodMap = leg.getProductInfo(link, extraLinks);
           if (prodMap != null) {
