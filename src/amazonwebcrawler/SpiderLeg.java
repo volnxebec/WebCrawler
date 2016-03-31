@@ -35,7 +35,7 @@ public class SpiderLeg
     private Document htmlDocument;
     
     private static final int LINK_THRESHOLD = 100;
-    private static final int PROXY_NUM_THRESHOLD = 80;
+    private static final int PROXY_NUM_THRESHOLD = 1000;
     
     // Proxy info
     private static final String proxyListUrl = "https://free-proxy-list.net";
