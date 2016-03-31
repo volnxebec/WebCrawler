@@ -58,6 +58,9 @@ public class SpiderLeg
         
         try
         {
+            System.setProperty("http.proxyHost", "");
+            System.setProperty("http.proxyPort", "");
+                
             String myUserAgent = USER_AGENT+nextSessionId()+")";
             System.out.println("Using USER_AGENT: "+myUserAgent);
             Connection connection = Jsoup.connect(proxyListUrl).userAgent(myUserAgent);
