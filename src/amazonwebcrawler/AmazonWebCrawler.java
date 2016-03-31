@@ -6,6 +6,7 @@
 package amazonwebcrawler;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,9 +24,9 @@ public class AmazonWebCrawler {
         System.out.println("Hello World!");
         
         //Default search list...
-        String[] listOfProducts = {"basketball", "soccer", "football"};
+        //String[] listOfProducts = {"basketball", "soccer", "football"};
         boolean realTime = true;
-        //String[] listOfProducts = {"basketball"};
+        String[] listOfProducts = {"basketball"};
         
         //Check if we have any arguments...
         if (args.length > 0) {
@@ -34,14 +35,18 @@ public class AmazonWebCrawler {
         }
         
         Spider spider = new Spider(realTime);               
+ 
         
         
         for (String tag : listOfProducts) {
-            String url = spider.searchTag(tag);       
+            String url = spider.searchTag(tag);  
+           
             Set<Map<String,Object>> products = spider.updateProductListing(url);
+            
             Mongo mg = new Mongo();
             mg.addProducts(products);
         }
+        
     }
     
 }

@@ -17,6 +17,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.security.SecureRandom;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+
 /**
  *
  * @author hwei
@@ -25,10 +30,39 @@ public class SpiderLeg
 {
     // We'll use a fake USER_AGENT so the web server thinks the robot is a normal web browser.
     private static final String USER_AGENT =
-            "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.112 Safari/535.1";
+            "Mozilla/5.0 (Windows NT 6.1; ";
     private List<String> links = new LinkedList<String>();
     private Document htmlDocument;
+    
+    private static final int LINK_THRESHOLD = 100;
+    
+    private LinkedHashMap<String, String> proxyInfo;
+    private List<String> proxyHostSet;
+    
+    private SecureRandom random = new SecureRandom();
 
+    public String nextSessionId() {
+        return new BigInteger(130, random).toString(32);
+    }
+
+    public SpiderLeg() {
+        proxyInfo = new LinkedHashMap<>();
+        
+        //Initialize some proxy hosts
+        proxyInfo.put("52.87.245.230", "8083");
+        proxyInfo.put("104.238.164.93", "80");
+        proxyInfo.put("54.187.229.154", "8083");
+        proxyInfo.put("52.53.254.181", "8083");
+        proxyInfo.put("52.23.206.118", "8083");
+        proxyInfo.put("52.53.225.219", "8083");
+        proxyInfo.put("204.101.220.108", "8080");
+        proxyInfo.put("52.36.16.112", "8083");
+        proxyInfo.put("52.36.203.4", "8083");
+        proxyInfo.put("52.36.204.219", "8083");
+        
+        proxyHostSet = new ArrayList(proxyInfo.keySet());
+    }
+    
     /**
      * This performs all the work. It makes an HTTP request, checks the response, and then gathers
      * up all the links on the page. Perform a searchForWord after the successful crawl
@@ -41,7 +75,9 @@ public class SpiderLeg
     {
         try
         {
-            Connection connection = Jsoup.connect(url).userAgent(USER_AGENT);
+            String myUserAgent = USER_AGENT+nextSessionId()+")";
+            System.out.println("Using USER_AGENT: "+myUserAgent);
+            Connection connection = Jsoup.connect(url).userAgent(myUserAgent);
             Document htmlDocument = connection.get();
             this.htmlDocument = htmlDocument;
             if(connection.response().statusCode() == 200) // 200 is the HTTP OK status code
@@ -100,24 +136,42 @@ public class SpiderLeg
     public List<String> getProductLinks(String url)
     {
         List<String> productLinks = new LinkedList<String>();
+        int numLink = 0;
         
         try
         {
-            Connection connection = Jsoup.connect(url).userAgent(USER_AGENT);
-            Document htmlDocument = connection.get();
-            this.htmlDocument = htmlDocument;
-            if(connection.response().statusCode() == 200) // 200 is the HTTP OK status code
-                                                          // indicating that everything is great.
-            {
-                System.out.println("\n**Visiting** Received web page at " + url);
+            Connection connection;
+            Elements linksOnPage = null;
+            while (numLink < LINK_THRESHOLD) {
+                int selectHost = random.nextInt(proxyInfo.size());
+                String proxyHost = proxyHostSet.get(selectHost);
+          
+                System.setProperty("http.proxyHost", proxyHost);
+                System.setProperty("http.proxyPort", proxyInfo.get(proxyHost));
+                
+                String curHost = System.getProperty("http.proxyHost");
+                String curPort = System.getProperty("http.proxyPort");        
+                System.out.println("Using Proxy: "+curHost+"/"+curPort);
+                
+                String myUserAgent = USER_AGENT+nextSessionId()+")";
+                connection = Jsoup.connect(url).userAgent(myUserAgent);
+                System.out.println("Using USER_AGENT: "+myUserAgent);
+                Document htmlDocument = connection.get();
+                this.htmlDocument = htmlDocument;
+                if(connection.response().statusCode() == 200) // 200 is the HTTP OK status code
+                                                              // indicating that everything is great.
+                {
+                    System.out.println("\n**Visiting** Received web page at " + url);
+                }
+                if(!connection.response().contentType().contains("text/html"))
+                {
+                    System.out.println("**Failure** Retrieved something other than HTML");
+                    //return false;
+                }
+                linksOnPage = htmlDocument.select("a[href]");
+                numLink = linksOnPage.size();
+                System.out.println("Found (" + numLink + ") links");
             }
-            if(!connection.response().contentType().contains("text/html"))
-            {
-                System.out.println("**Failure** Retrieved something other than HTML");
-                //return false;
-            }
-            Elements linksOnPage = htmlDocument.select("a[href]");
-            System.out.println("Found (" + linksOnPage.size() + ") links");
             for(Element link : linksOnPage)
             {
                 
@@ -145,23 +199,44 @@ public class SpiderLeg
         List<String> tagLinks = new LinkedList<String>();
         List<String> reviewLinks = new LinkedList<String>();
         Map<String, Object> prodInfo = new HashMap<>();
+        int numLink = 0;
+        
         
         try
         {
-            Connection connection = Jsoup.connect(url).userAgent(USER_AGENT);
-            Document htmlDocument = connection.get();
-            this.htmlDocument = htmlDocument;
-            if(connection.response().statusCode() == 200) // 200 is the HTTP OK status code
-                                                          // indicating that everything is great.
-            {
-                //System.out.println("\n**Visiting** Received web page at " + url);
+            Connection connection;
+            Elements linksOnPage = null;
+            while (numLink < LINK_THRESHOLD) {
+                int selectHost = random.nextInt(proxyInfo.size());
+                String proxyHost = proxyHostSet.get(selectHost);
+          
+                System.setProperty("http.proxyHost", proxyHost);
+                System.setProperty("http.proxyPort", proxyInfo.get(proxyHost));
+                
+                String curHost = System.getProperty("http.proxyHost");
+                String curPort = System.getProperty("http.proxyPort");        
+                System.out.println("Using Proxy: "+curHost+"/"+curPort);
+                
+                String myUserAgent = USER_AGENT+nextSessionId()+")";
+                connection = Jsoup.connect(url).userAgent(myUserAgent);
+                System.out.println("Using USER_AGENT: "+myUserAgent);
+                
+                Document htmlDocument = connection.get();
+                this.htmlDocument = htmlDocument;
+                if(connection.response().statusCode() == 200) // 200 is the HTTP OK status code
+                                                              // indicating that everything is great.
+                {
+                    System.out.println("\n**Visiting** Received web page at " + url);
+                }
+                if(!connection.response().contentType().contains("text/html"))
+                {
+                    System.out.println("**Failure** Retrieved something other than HTML");
+                    //return false;
+                }
+                linksOnPage = htmlDocument.select("a[href]");
+                numLink = linksOnPage.size();
+                System.out.println("Found (" + numLink + ") links");
             }
-            if(!connection.response().contentType().contains("text/html"))
-            {
-                System.out.println("**Failure** Retrieved something other than HTML");
-                //return false;
-            }
-            //System.out.println(htmlDocument);
 
             //Put in the product name
             Elements getName = htmlDocument.select("span[id=productTitle]");
