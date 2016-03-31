@@ -5,8 +5,13 @@
  */
 package amazonwebcrawler;
 
+import java.io.FileReader;
+import java.io.BufferedReader;
+
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,8 +35,22 @@ public class AmazonWebCrawler {
         
         //Check if we have any arguments...
         if (args.length > 0) {
-            listOfProducts = args;
-            realTime = true;
+            if (args[0].equals("readfile")) {
+                String filePath = args[1];
+                FileReader fr = new FileReader(filePath);
+                BufferedReader br = new BufferedReader(fr);
+                String aProduct = "";
+                List<String> textProductList = new ArrayList<>();
+                while ((aProduct = br.readLine()) != null) {
+                    textProductList.add(aProduct);
+                }
+                listOfProducts = textProductList.toArray(listOfProducts);
+                System.out.println("Reading products from file @ "+filePath);
+            }
+            else {
+                listOfProducts = args;
+                realTime = true;
+            }
         }
         
         Spider spider = new Spider(realTime);               
@@ -40,6 +59,9 @@ public class AmazonWebCrawler {
             String url = spider.searchTag(tag);  
            
             Set<Map<String,Object>> products = spider.updateProductListing(url);
+            
+            System.setProperty("http.proxyHost", "");
+            System.setProperty("http.proxyPort", "");
             
             Mongo mg = new Mongo();
             mg.addProducts(products);
