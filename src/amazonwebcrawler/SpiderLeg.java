@@ -328,8 +328,16 @@ public class SpiderLeg
             //Put in the product price
             Elements getPrice = htmlDocument.select("span[id=priceblock_ourprice]");
             String myPrice = getPrice.text();
+            String finalPrice = "";
+            String[] myPriceParse = myPrice.split(" ");
+            if (myPriceParse.length > 1) {
+                finalPrice = myPriceParse[1];               
+            }
+            else {
+                finalPrice = myPrice;
+            }
             //System.out.println(myPrice);
-            prodInfo.put("price", myPrice);
+            prodInfo.put("price", finalPrice);
             
             //Put in the product url
             Elements getUrl = htmlDocument.select("link[rel=canonical]");
