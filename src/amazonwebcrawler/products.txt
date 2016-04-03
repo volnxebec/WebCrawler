@@ -1,6 +1,6 @@
+Books
 Bread
 Breakfast Foods
-Gums
 Butters
 Cakes
 Candy
@@ -37,6 +37,7 @@ Dog Supplies
 Dog Training & Behavior Aids
 Dog Treats
 Drain Care
+Dresses
 Drink Mixers
 Drink Mixes
 Ear Care
@@ -62,6 +63,7 @@ Frozen Foods
 Fruit Snacks
 Fruits
 Garlic
+Games
 Gift Sets
 Glass Cleaners
 Gourmet Food Gifts
@@ -89,6 +91,9 @@ Insect
 Insects Care
 Jams
 Juices
+Movies
+Music Instruments
+Pens
 Pet Beds & Carriers
 Pet Care
 Pet Flea, Lice & Tick Control
@@ -106,6 +111,7 @@ Sauces
 Seasonings
 Sexual Wellness
 Shaving Products
+Shoes
 Skin Care
 Sleep Aids
 Small Animals Food
@@ -122,6 +128,7 @@ Therapeutic Skin Care
 Tissues & Paper Towels
 Training Pants
 Trash Bags
+TV
 Urinary Tract Infection Treatments
 Vegetables
 Vinegars
@@ -129,4 +136,5 @@ Vitamins & Supplements
 Water
 Weight Loss Products & Supplements
 Wheat Flours & Meals
+XBOX
 Yogurt

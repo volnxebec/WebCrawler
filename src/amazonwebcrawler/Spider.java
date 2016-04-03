@@ -32,7 +32,7 @@ public class Spider
   private static final String AMAZON_SEARCH = 
     "http://www.amazon.ca/s/ref=nb_sb_noss_2?url=search-alias%3Daps&field-keywords=";
   
-  private static final int MAX_RESULT = 5;
+  private static final int MAX_RESULT = 10;
   
   public Spider(boolean realTime) {
       this.realTime = realTime;

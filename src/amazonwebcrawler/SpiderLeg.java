@@ -329,7 +329,11 @@ public class SpiderLeg
             Elements getPrice = htmlDocument.select("span[id=priceblock_ourprice]");
             String myPrice = getPrice.text();
             //System.out.println(myPrice);
-            prodInfo.put("price", myPrice);
+            String[] myPriceParse = myPrice.split(" ");
+            if (myPriceParse.length < 2) {
+                return null;
+            }
+            prodInfo.put("price", myPriceParse[1]);
             
             //Put in the product url
             Elements getUrl = htmlDocument.select("link[rel=canonical]");
@@ -415,6 +419,7 @@ public class SpiderLeg
             if (tagLinks.isEmpty()) {
                 return null;
             }
+            tagLinks.add(myName);
             //String tagString = tagLinks.toString();
             prodInfo.put("tag", tagLinks);
             //return true;
